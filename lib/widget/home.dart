@@ -78,7 +78,8 @@ class _PageHomeState extends State<PageHome> {
     }
 
     List<Widget> children = [];
-    children.add(const SizedBox(height: 32));
+    children.add(SizedBox(height: query.padding.top));
+    children.add(const SizedBox(height: 10));
     if (widget.type == PageType.search) {
       children.add(Container(
         alignment: Alignment.center,
@@ -117,7 +118,7 @@ class _PageHomeState extends State<PageHome> {
           }));
     }
 
-    children.add(const SizedBox(height: 16));
+    children.add(const SizedBox(height: 10));
     children.add(Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10),

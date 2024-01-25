@@ -36,7 +36,7 @@ class MovieItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   child: FancyShimmerImage(
                     imageUrl:
-                        'https://img.ophim9.cc/uploads/movies/${movie.thumbUrl}',
+                        'https://img.ophim10.cc/uploads/movies/${movie.thumbUrl}',
                     width: imageWidth,
                     height: imageHeight,
                   )),

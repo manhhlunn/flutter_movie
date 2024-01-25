@@ -19,25 +19,25 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late Future<MovieDetail> futureMovie;
 
+  MovieDetail? _movie;
   Episodes? _currentEpisodes;
   int _currentEpisodeIdx = 0;
   late BetterPlayerController _currentPlayerController;
 
   @override
   void initState() {
-    super.initState();
     futureMovie = NetworkRequest.fetchData(widget.slug);
     _currentPlayerController = BetterPlayerController(
         const BetterPlayerConfiguration(
             autoPlay: true,
             fit: BoxFit.contain,
             autoDetectFullscreenDeviceOrientation: true,
-            expandToFill: false
-        ));
+            expandToFill: false));
     _currentPlayerController.addEventsListener((p0) => {
           if (p0.betterPlayerEventType == BetterPlayerEventType.finished)
             nextVideo()
         });
+    super.initState();
   }
 
   @override
@@ -144,8 +144,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
                     var detail = snapshot.data;
                     var items = detail?.episodes ?? [];
-                    if (items.isNotEmpty) {
+                    if (items.isNotEmpty && detail != null) {
                       if (_currentEpisodes == null) {
+                        _movie = detail;
                         setController(items.first, 0);
                       }
                       children.add(Container(
@@ -200,14 +201,24 @@ class _DetailScreenState extends State<DetailScreen> {
   BetterPlayerDataSource createDataSource(Episodes data, int idx) {
     var serverData = data.serverData?[idx];
     return BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, serverData?.linkM3u8 ?? '');
+      BetterPlayerDataSourceType.network,
+      serverData?.linkM3u8 ?? '',
+      notificationConfiguration: BetterPlayerNotificationConfiguration(
+        showNotification: true,
+        title: _movie?.movie?.name ?? '',
+        author: serverData?.name ?? '',
+        imageUrl: _movie?.movie?.posterUrl ?? '',
+        activityName: "MainActivity",
+      ),
+    );
   }
 
   void nextVideo() {
     int? maxSize = _currentEpisodes?.serverData?.length;
-    if (maxSize != null && _currentEpisodeIdx <= maxSize - 1) {
+    Episodes? data = _currentEpisodes;
+    if (maxSize != null && data != null && _currentEpisodeIdx <= maxSize - 1) {
       setState(() {
-        _currentEpisodeIdx = _currentEpisodeIdx + 1;
+        setController(data, _currentEpisodeIdx + 1);
       });
     }
   }
