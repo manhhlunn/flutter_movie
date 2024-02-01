@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_movie/const/string.dart';
 import 'package:flutter_movie/model/movie.dart';
 import 'package:flutter_movie/network/network_request.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
 import 'filter.dart';
 import 'movie.dart';
 
@@ -19,7 +19,7 @@ class PageHome extends StatefulWidget {
 class _PageHomeState extends State<PageHome> {
   late Future<MovieResponse> futureMovie;
   final PagingController<int, Movie> _pagingController =
-  PagingController(firstPageKey: 1);
+      PagingController(firstPageKey: 1);
 
   String _keyword = '';
   String _genre = '';
@@ -27,6 +27,7 @@ class _PageHomeState extends State<PageHome> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
+      NetworkRequest.isConfig = await NetworkRequest.init();
       final newItems = await NetworkRequest.fetchList(
           widget.type, pageKey, _genre, _country, _keyword);
       final totalItems =
@@ -125,7 +126,7 @@ class _PageHomeState extends State<PageHome> {
         child: RefreshIndicator(
             onRefresh: () => Future.sync(
                   () => _pagingController.refresh(),
-            ),
+                ),
             child: PagedGridView<int, Movie>(
               pagingController: _pagingController,
               showNewPageProgressIndicatorAsGridChild: true,
@@ -150,21 +151,21 @@ class _PageHomeState extends State<PageHome> {
   void _handleSearch(String input) {
     _keyword = input;
     Future.sync(
-          () => _pagingController.refresh(),
+      () => _pagingController.refresh(),
     );
   }
 
   void _handleChangeCountry(String input) {
     _country = input;
     Future.sync(
-          () => _pagingController.refresh(),
+      () => _pagingController.refresh(),
     );
   }
 
   void _handleChangeGenre(String input) {
     _genre = input;
     Future.sync(
-          () => _pagingController.refresh(),
+      () => _pagingController.refresh(),
     );
   }
 }

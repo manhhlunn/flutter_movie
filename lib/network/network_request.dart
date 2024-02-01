@@ -6,8 +6,31 @@ import 'package:flutter_movie/model/movie_detail.dart';
 import 'package:http/http.dart';
 
 class NetworkRequest {
-  static const String baseUrl = "ophim10.cc";
-  static const String path = "_next/data/s4OlXy8jONoHVWAT5vg7b";
+  static String baseUrl = "ophim11.cc";
+  static String path = "_next/data/s4OlXy8jONoHVWAT5vg7b";
+  static String imageUrl = "https://img.ophim11.cc/uploads/movies/";
+  static bool isConfig = false;
+
+  static Future<bool> init() async {
+    if (isConfig) {
+      return true;
+    }
+    final uri = Uri.parse("https://manhhlunn.github.io/movie/config.json");
+    final response = await get(uri);
+    if (response.statusCode == 200) {
+      String decodedString = utf8.decode(response.body.runes.toList());
+      Map<String, dynamic> data = jsonDecode(decodedString);
+      var jsonBaseUrl = data['baseUrl'];
+      var jsonPath = data['path'];
+      var jsonImageUrl = data['imageUrl'];
+      if (jsonBaseUrl != null) baseUrl = jsonBaseUrl;
+      if (jsonPath != null) path = jsonPath;
+      if (jsonImageUrl != null) imageUrl = jsonImageUrl;
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   static Future<MovieResponse> fetchList(PageType pageType, int page,
       String genre, String country, String keyword) async {

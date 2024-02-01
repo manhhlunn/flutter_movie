@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_movie/model/movie.dart';
+import 'package:flutter_movie/network/network_request.dart';
 import 'package:flutter_movie/widget/detail.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -36,7 +37,7 @@ class MovieItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   child: FancyShimmerImage(
                     imageUrl:
-                        'https://img.ophim10.cc/uploads/movies/${movie.thumbUrl}',
+                        '${NetworkRequest.imageUrl}${movie.thumbUrl}',
                     width: imageWidth,
                     height: imageHeight,
                   )),

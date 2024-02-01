@@ -32,7 +32,6 @@ dependencies:
     sdk: flutter
   http: ^1.1.2
   infinite_scroll_pagination: ^4.0.0
-  shimmer: ^3.0.0
   fancy_shimmer_image: ^2.0.3
   url_launcher: ^6.2.4
   better_player: ^0.0.83
