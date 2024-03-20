@@ -9,7 +9,7 @@ class EpisodesWidgetCallback {
 }
 
 class EpisodesWidget extends StatefulWidget {
-  final Episodes episode;
+  final Episodes? episode;
   final int index;
   final List<Episodes> episodes;
   final ValueChanged<EpisodesWidgetCallback> onChanged;
@@ -26,7 +26,7 @@ class EpisodesWidget extends StatefulWidget {
 }
 
 class EpisodesWidgetState extends State<EpisodesWidget> {
-  late Episodes _current;
+  late Episodes? _current;
   late int _selected;
 
   @override
@@ -61,7 +61,7 @@ class EpisodesWidgetState extends State<EpisodesWidget> {
 
 class EpisodeWidget extends StatelessWidget {
   final Episodes episode;
-  final Episodes current;
+  final Episodes? current;
   final int currentIdx;
   final ValueChanged<int> onChanged;
 

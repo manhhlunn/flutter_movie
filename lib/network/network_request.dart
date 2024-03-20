@@ -6,63 +6,33 @@ import 'package:flutter_movie/model/movie_detail.dart';
 import 'package:http/http.dart';
 
 class NetworkRequest {
-  static String baseUrl = "ophim11.cc";
-  static String path = "_next/data/s4OlXy8jONoHVWAT5vg7b";
-  static String imageUrl = "https://img.ophim11.cc/uploads/movies/";
-  static bool isConfig = false;
-
-  static Future<bool> init() async {
-    if (isConfig) {
-      return true;
-    }
-    final uri = Uri.parse("https://manhhlunn.github.io/movie/config.json");
-    final response = await get(uri);
-    if (response.statusCode == 200) {
-      String decodedString = utf8.decode(response.body.runes.toList());
-      Map<String, dynamic> data = jsonDecode(decodedString);
-      var jsonBaseUrl = data['baseUrl'];
-      var jsonPath = data['path'];
-      var jsonImageUrl = data['imageUrl'];
-      if (jsonBaseUrl != null) baseUrl = jsonBaseUrl;
-      if (jsonPath != null) path = jsonPath;
-      if (jsonImageUrl != null) imageUrl = jsonImageUrl;
-      return true;
-    } else {
-      return false;
-    }
-  }
+  static const String domain = "ophim1.com";
+  static String imageDomain = "ophim1.com";
 
   static Future<MovieResponse> fetchList(PageType pageType, int page,
-      String genre, String country, String keyword) async {
+      String category, String country, String keyword) async {
     final query = {
       'page': '$page',
-      'category': genre,
+      'category': category,
       'country': country,
       'keyword': keyword
     };
 
-    final uri = Uri.https(baseUrl, '$path/${pageType.jsonName}', query);
+    final uri = Uri.https(domain, "/v1/api/${pageType.jsonName}", query);
     final response = await get(uri);
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      String decodedString = utf8.decode(response.body.runes.toList());
-      return MovieResponse.fromJson(jsonDecode(decodedString));
+      return MovieResponse.fromJson(jsonDecode(response.body));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw Exception("Failed to fetchList type: $pageType");
     }
   }
 
   static Future<MovieDetail> fetchData(String slug) async {
-    final uri = Uri.https('ophim1.com', "phim/$slug");
+    final uri = Uri.https(domain, "/v1/api/phim/$slug");
     final response = await get(uri);
     if (response.statusCode == 200) {
       return MovieDetail.fromJson(jsonDecode(response.body));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw Exception('Failed to fetchData slug:$slug');
     }
   }
@@ -105,13 +75,13 @@ extension PageTypeExt on PageType {
   String get jsonName {
     switch (this) {
       case PageType.homes:
-        return "danh-sach/phim-moi.json";
+        return "danh-sach/phim-moi";
       case PageType.movie:
-        return "danh-sach/phim-le.json";
+        return "danh-sach/phim-le";
       case PageType.tvSeries:
-        return "danh-sach/phim-bo.json";
+        return "danh-sach/phim-bo";
       case PageType.search:
-        return "tim-kiem.json";
+        return "tim-kiem";
     }
   }
 }

@@ -1,16 +1,37 @@
-part of 'movie_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-@freezed
-class MovieEvent with _$MovieEvent {
-  const factory MovieEvent.loadStarted(
-      {required PageType pageType,
-      required String genre,
-      required String country,
-      required String keyword}) = ItemLoadStarted;
+sealed class MovieEvent extends Equatable {
+  const MovieEvent();
 
-  const factory MovieEvent.loadMoreStarted({required PageType pageType}) =
-      ItemLoadMoreStarted;
-
-  const factory MovieEvent.selectChanged({required String slug}) =
-      ItemSelectChanged;
+  @override
+  List<Object> get props => [];
 }
+
+enum Filters {
+  keyword,
+  category,
+  country
+}
+
+class MovieFetchEvent extends MovieEvent {
+  final int page;
+
+  const MovieFetchEvent({required this.page});
+
+  @override
+  List<Object> get props => [page];
+}
+
+class FilterEvent extends MovieEvent {
+  final Filters filter;
+  final String value;
+
+  const FilterEvent({required this.filter, required this.value});
+
+  @override
+  List<Object> get props => [filter, value];
+}
+
+
+
+

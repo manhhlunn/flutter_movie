@@ -1,126 +1,87 @@
+import 'package:flutter_movie/const/string.dart';
+
 class MovieDetail {
-  bool? status;
-  String? msg;
-  Movie? movie;
-  List<Episodes>? episodes;
+  final DetailData? data;
 
-  MovieDetail({this.status, this.msg, this.movie, this.episodes});
+  const MovieDetail({required this.data});
 
-  MovieDetail.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    msg = json['msg'];
-    movie = json['movie'] != null ? Movie.fromJson(json['movie']) : null;
-    if (json['episodes'] != null) {
-      episodes = <Episodes>[];
-      json['episodes'].forEach((v) {
-        episodes!.add(Episodes.fromJson(v));
-      });
-    }
+  factory MovieDetail.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'data': Map<String, dynamic> json,
+      } =>
+        MovieDetail(data: DetailData.fromJson(json)),
+      _ => throw const FormatException('Failed to load MovieDetail.'),
+    };
   }
+}
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['msg'] = msg;
-    if (movie != null) {
-      data['movie'] = movie!.toJson();
-    }
-    if (episodes != null) {
-      data['episodes'] = episodes!.map((v) => v.toJson()).toList();
-    }
-    return data;
+class DetailData {
+  final Movie? item;
+
+  const DetailData({required this.item});
+
+  factory DetailData.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'item': Map<String, dynamic> json,
+      } =>
+        DetailData(item: Movie.fromJson(json)),
+      _ => throw const FormatException('Failed to load DetailData.'),
+    };
   }
 }
 
 class Movie {
-  Created? created;
-  Created? modified;
   String? sId;
   String? name;
   String? slug;
   String? originName;
   String? content;
-  String? type;
-  String? status;
   String? thumbUrl;
   String? posterUrl;
-  bool? isCopyright;
-  bool? subDocquyen;
-  bool? chieurap;
   String? trailerUrl;
   String? time;
   String? episodeCurrent;
   String? episodeTotal;
   String? quality;
   String? lang;
-  String? notify;
-  String? showtimes;
-  int? year;
-  int? view;
-  List<String>? actor;
-  List<String>? director;
   List<Category>? category;
   List<Country>? country;
+  List<Episodes>? episodes;
 
   Movie(
-      {this.created,
-      this.modified,
-      this.sId,
+      {this.sId,
       this.name,
       this.slug,
       this.originName,
       this.content,
-      this.type,
-      this.status,
       this.thumbUrl,
       this.posterUrl,
-      this.isCopyright,
-      this.subDocquyen,
-      this.chieurap,
       this.trailerUrl,
       this.time,
       this.episodeCurrent,
       this.episodeTotal,
       this.quality,
       this.lang,
-      this.notify,
-      this.showtimes,
-      this.year,
-      this.view,
-      this.actor,
-      this.director,
       this.category,
-      this.country});
+      this.country,
+      this.episodes});
 
   Movie.fromJson(Map<String, dynamic> json) {
-    created =
-        json['created'] != null ? Created.fromJson(json['created']) : null;
-    modified =
-        json['modified'] != null ? Created.fromJson(json['modified']) : null;
     sId = json['_id'];
     name = json['name'];
     slug = json['slug'];
     originName = json['origin_name'];
     content = json['content'];
-    type = json['type'];
-    status = json['status'];
     thumbUrl = json['thumb_url'];
     posterUrl = json['poster_url'];
-    isCopyright = json['is_copyright'];
-    subDocquyen = json['sub_docquyen'];
-    chieurap = json['chieurap'];
     trailerUrl = json['trailer_url'];
     time = json['time'];
     episodeCurrent = json['episode_current'];
     episodeTotal = json['episode_total'];
     quality = json['quality'];
     lang = json['lang'];
-    notify = json['notify'];
-    showtimes = json['showtimes'];
-    year = json['year'];
-    view = json['view'];
-    actor = json['actor'].cast<String>();
-    director = json['director'].cast<String>();
     if (json['category'] != null) {
       category = <Category>[];
       json['category'].forEach((v) {
@@ -133,62 +94,38 @@ class Movie {
         country!.add(Country.fromJson(v));
       });
     }
+    if (json['episodes'] != null) {
+      episodes = <Episodes>[];
+      json['episodes'].forEach((v) {
+        episodes!.add(Episodes.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (created != null) {
-      data['created'] = created!.toJson();
-    }
-    if (modified != null) {
-      data['modified'] = modified!.toJson();
-    }
     data['_id'] = sId;
     data['name'] = name;
     data['slug'] = slug;
     data['origin_name'] = originName;
     data['content'] = content;
-    data['type'] = type;
-    data['status'] = status;
     data['thumb_url'] = thumbUrl;
     data['poster_url'] = posterUrl;
-    data['is_copyright'] = isCopyright;
-    data['sub_docquyen'] = subDocquyen;
-    data['chieurap'] = chieurap;
     data['trailer_url'] = trailerUrl;
     data['time'] = time;
     data['episode_current'] = episodeCurrent;
     data['episode_total'] = episodeTotal;
     data['quality'] = quality;
     data['lang'] = lang;
-    data['notify'] = notify;
-    data['showtimes'] = showtimes;
-    data['year'] = year;
-    data['view'] = view;
-    data['actor'] = actor;
-    data['director'] = director;
     if (category != null) {
       data['category'] = category!.map((v) => v.toJson()).toList();
     }
     if (country != null) {
       data['country'] = country!.map((v) => v.toJson()).toList();
     }
-    return data;
-  }
-}
-
-class Created {
-  String? time;
-
-  Created({this.time});
-
-  Created.fromJson(Map<String, dynamic> json) {
-    time = json['time'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['time'] = time;
+    if (episodes != null) {
+      data['episodes'] = episodes!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
@@ -295,17 +232,18 @@ class ServerData {
 extension MovieDetailExtension on MovieDetail {
   Map<String, String> get firstLine {
     return {
-      "Trạng thái": movie?.episodeCurrent ?? '',
-      "Số tập": movie?.episodeTotal ?? '',
-      "Thời lượng": movie?.time ?? '',
+      StringValue.status: data?.item?.episodeCurrent ?? '',
+      StringValue.episodeCount: data?.item?.episodeTotal ?? '',
+      StringValue.duration: data?.item?.time ?? '',
     };
   }
 
   Map<String, String> get secondLine {
     return {
-      "Quốc gia": movie?.country?.map((e) => e.name).join(', ') ?? '',
-      "Chất lượng": movie?.quality ?? '',
-      "Phiên dịch": movie?.lang ?? '',
+      StringValue.country:
+          data?.item?.country?.map((e) => e.name).join(', ') ?? '',
+      StringValue.quality: data?.item?.quality ?? '',
+      StringValue.subtitle: data?.item?.lang ?? '',
     };
   }
 }
