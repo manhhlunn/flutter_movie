@@ -1,4 +1,4 @@
-import 'package:better_player/better_player.dart';
+import 'package:chewie/chewie.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +11,7 @@ import 'package:flutter_movie/widget/data_detail.dart';
 import 'package:flutter_movie/widget/episodes.dart';
 import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 
 class DetailScreen extends StatefulWidget {
   final String slug;
@@ -22,17 +23,12 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  late BetterPlayerController _currentPlayerController;
   MovieDetailBloc movieDetailBloc = MovieDetailBloc();
+  ChewieController? _controller;
+  VideoPlayerController? _videoPlayerController;
 
   @override
   void initState() {
-    _currentPlayerController = BetterPlayerController(
-        const BetterPlayerConfiguration(
-            autoPlay: true,
-            fit: BoxFit.contain,
-            autoDetectFullscreenDeviceOrientation: true,
-            expandToFill: false));
     movieDetailBloc.add(GetDetailEvent(slug: widget.slug));
     super.initState();
   }
@@ -136,7 +132,12 @@ class _DetailScreenState extends State<DetailScreen> {
                 style: const TextStyle(fontSize: 14),
               ),
             ),
-            BetterPlayer(controller: _currentPlayerController)
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: _controller != null
+                  ? Chewie(controller: _controller!)
+                  : const CircularProgressIndicator(),
+            )
           ];
 
           var items = state.detail?.data?.item?.episodes ?? [];
@@ -216,27 +217,28 @@ class _DetailScreenState extends State<DetailScreen> {
         }
       }
 
-      _currentPlayerController.dispose();
+      _videoPlayerController?.dispose();
+      _controller?.dispose();
     });
     super.dispose();
   }
 
   void setController(Episodes data, int idx, int initial) {
-    _currentPlayerController.setupDataSource(createDataSource(data, idx));
-    _currentPlayerController.addEventsListener((p0) => {
-          position =
-              _currentPlayerController.videoPlayerController?.value.position,
-          if (p0.betterPlayerEventType == BetterPlayerEventType.initialized)
-            {_currentPlayerController.seekTo(Duration(milliseconds: initial))}
-          else if (p0.betterPlayerEventType == BetterPlayerEventType.finished)
-            {nextVideo()}
-        });
+    var videoController = createDataSource(data, idx);
+    _videoPlayerController = videoController;
+    _controller = ChewieController(
+      autoInitialize: true,
+      aspectRatio: 16 / 9,
+      videoPlayerController: videoController,
+      startAt: Duration(milliseconds: initial),
+    );
   }
 
-  BetterPlayerDataSource createDataSource(Episodes data, int idx) {
+  VideoPlayerController createDataSource(Episodes data, int idx) {
     var serverData = data.serverData?[idx];
-    return BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, serverData?.linkM3u8 ?? '');
+    return VideoPlayerController.networkUrl(
+        Uri.parse(serverData?.linkM3u8 ?? ''),
+        formatHint: VideoFormat.hls);
   }
 
   void nextVideo() {

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_movie/dao/history_dao.dart';
-import 'package:flutter_movie/database/app_database.dart';
 import 'package:flutter_movie/model/movie_detail.dart';
 import 'package:flutter_movie/network/network_request.dart';
 import 'package:get_it/get_it.dart';
