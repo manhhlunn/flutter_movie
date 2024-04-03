@@ -6,6 +6,7 @@ import 'package:flutter_movie/page_bloc/page_event.dart';
 import 'package:flutter_movie/page_bloc/page_state.dart';
 import 'package:flutter_movie/routes/generated_routes.dart';
 import 'package:flutter_movie/screen/home_page.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -23,32 +24,42 @@ class HomeScreen extends StatelessWidget {
         listener: (context, state) {},
         builder: (context, state) {
           return Scaffold(
-            body: IndexedStack(
-              index: state.tabIndex,
-              children: widgetOptions,
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              items: items,
-              currentIndex: state.tabIndex,
-              selectedItemColor: Colors.pinkAccent,
-              unselectedItemColor: Colors.grey,
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: Colors.black,
-              elevation: 4.0,
-              onTap: (index) {
-                context.read<PageBloc>().add(TabChange(tabIndex: index));
-              },
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.pushNamed(context, RouteGenerator.history);
-              },
-              shape: const CircleBorder(),
-              mini: true,
-              backgroundColor: Colors.pinkAccent,
-              child: const Icon(Icons.history, color: Colors.white),
-            ),
-          );
+              body: IndexedStack(
+                index: state.tabIndex,
+                children: widgetOptions,
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                items: items,
+                currentIndex: state.tabIndex,
+                selectedItemColor: Colors.pinkAccent,
+                unselectedItemColor: Colors.grey,
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Colors.black,
+                elevation: 4.0,
+                onTap: (index) {
+                  context.read<PageBloc>().add(TabChange(tabIndex: index));
+                },
+              ),
+              floatingActionButton: SpeedDial(
+                animatedIcon: AnimatedIcons.menu_close,
+                overlayOpacity: 0.0,
+                backgroundColor: Colors.pinkAccent,
+                children: [
+                  SpeedDialChild(
+                      shape: const CircleBorder(),
+                      child: const Icon(Icons.history),
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteGenerator.history);
+                      }),
+
+                  SpeedDialChild(
+                      shape: const CircleBorder(),
+                      child: const Icon(Icons.favorite),
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteGenerator.favorite);
+                      })
+                ],
+              ));
         },
       ),
     );

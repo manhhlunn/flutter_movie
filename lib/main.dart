@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/dao/favorite_dao.dart';
 import 'package:flutter_movie/dao/history_dao.dart';
 import 'package:flutter_movie/database/app_database.dart';
 import 'package:flutter_movie/routes/generated_routes.dart';
@@ -9,6 +10,7 @@ void main() async {
   GetIt serviceLocator = GetIt.instance;
   final appDatabase = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   serviceLocator.registerSingleton<HistoryDao>(appDatabase.historyDao);
+  serviceLocator.registerSingleton<FavoriteDao>(appDatabase.favoriteDao);
   runApp(const MovieApp());
 }
 

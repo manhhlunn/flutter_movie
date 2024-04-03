@@ -83,6 +83,7 @@ class Pagination {
   }
 }
 
+
 class PreviewMovie {
   final String? id;
   final String? name;

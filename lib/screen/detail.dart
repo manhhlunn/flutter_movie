@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_movie/dao/history_dao.dart';
 import 'package:flutter_movie/detail_bloc/movie_detail_bloc.dart';
+import 'package:flutter_movie/entity/favorite_entity.dart';
 import 'package:flutter_movie/entity/history_entity.dart';
 import 'package:flutter_movie/model/movie_detail.dart';
 import 'package:flutter_movie/network/network_request.dart';
 import 'package:flutter_movie/widget/data_detail.dart';
 import 'package:flutter_movie/widget/episodes.dart';
 import 'package:get_it/get_it.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -70,12 +70,18 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.ondemand_video_rounded),
-                  tooltip: 'Open trailer',
+                  icon: const Icon(Icons.favorite),
+                  tooltip: 'Favorite',
+                  color: state.isFavorite ? Colors.red : Colors.grey,
                   onPressed: () {
-                    var uri =
-                        Uri.parse(state.detail?.data?.item?.trailerUrl ?? '');
-                    launchUrl(uri);
+                    movieDetailBloc.add(FavoriteChangeEvent(
+                        favorite: Favorite(
+                            state.detail?.data?.item?.slug ?? '',
+                            state.detail?.data?.item?.name ?? '',
+                            state.detail?.data?.item?.thumbUrl ?? '',
+                            state.detail?.data?.item?.quality ?? '',
+                            DateTime.now().millisecondsSinceEpoch),
+                        isFavorite: !state.isFavorite));
                   },
                 )
               ],
@@ -186,15 +192,14 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Duration? position;
-
   @override
   Future<void> dispose() async {
     Future.delayed(Duration.zero, () async {
       final historyDao = GetIt.instance<HistoryDao>();
       final history = await historyDao.findById(widget.slug);
       final episode = movieDetailBloc.state.currentEpisodes;
-      final position = this.position?.inMilliseconds ?? 0;
+      final position =
+          _videoPlayerController?.value.position.inMilliseconds ?? 0;
       if (episode != null) {
         final serverIndex = movieDetailBloc.state.detail?.data?.item?.episodes
             ?.indexOf(episode);

@@ -63,13 +63,15 @@ class _$AppDatabase extends AppDatabase {
 
   HistoryDao? _historyDaoInstance;
 
+  FavoriteDao? _favoriteDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 2,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -86,6 +88,8 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `History` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `serverIndex` INTEGER NOT NULL, `episodeIndex` INTEGER NOT NULL, `position` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Favorite` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `quality` TEXT NOT NULL, `updateTime` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -96,6 +100,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   HistoryDao get historyDao {
     return _historyDaoInstance ??= _$HistoryDao(database, changeListener);
+  }
+
+  @override
+  FavoriteDao get favoriteDao {
+    return _favoriteDaoInstance ??= _$FavoriteDao(database, changeListener);
   }
 }
 
@@ -201,5 +210,87 @@ class _$HistoryDao extends HistoryDao {
   @override
   Future<void> deleteHistory(History history) async {
     await _historyDeletionAdapter.delete(history);
+  }
+}
+
+class _$FavoriteDao extends FavoriteDao {
+  _$FavoriteDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
+        _favoriteInsertionAdapter = InsertionAdapter(
+            database,
+            'Favorite',
+            (Favorite item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'image': item.image,
+                  'quality': item.quality,
+                  'updateTime': item.updateTime
+                },
+            changeListener),
+        _favoriteUpdateAdapter = UpdateAdapter(
+            database,
+            'Favorite',
+            ['id'],
+            (Favorite item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'image': item.image,
+                  'quality': item.quality,
+                  'updateTime': item.updateTime
+                },
+            changeListener);
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Favorite> _favoriteInsertionAdapter;
+
+  final UpdateAdapter<Favorite> _favoriteUpdateAdapter;
+
+  @override
+  Stream<List<Favorite>> findAll() {
+    return _queryAdapter.queryListStream(
+        'SELECT * FROM Favorite ORDER BY updateTime DESC',
+        mapper: (Map<String, Object?> row) => Favorite(
+            row['id'] as String,
+            row['name'] as String,
+            row['image'] as String,
+            row['quality'] as String,
+            row['updateTime'] as int),
+        queryableName: 'Favorite',
+        isView: false);
+  }
+
+  @override
+  Future<Favorite?> findById(String id) async {
+    return _queryAdapter.query('SELECT * FROM Favorite WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => Favorite(
+            row['id'] as String,
+            row['name'] as String,
+            row['image'] as String,
+            row['quality'] as String,
+            row['updateTime'] as int),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteFavorite(String id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM Favorite WHERE id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<void> insertFavorite(Favorite history) async {
+    await _favoriteInsertionAdapter.insert(history, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateFavorite(Favorite history) async {
+    await _favoriteUpdateAdapter.update(history, OnConflictStrategy.abort);
   }
 }

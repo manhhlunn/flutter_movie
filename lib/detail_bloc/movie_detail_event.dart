@@ -29,3 +29,13 @@ class ChangeEpisodeEvent extends MovieDetailEvent {
   @override
   List<Object> get props => [episodes, index];
 }
+
+class FavoriteChangeEvent extends MovieDetailEvent {
+  final Favorite favorite;
+  final bool isFavorite;
+
+  const FavoriteChangeEvent({required this.favorite, required this.isFavorite});
+
+  @override
+  List<Object> get props => [favorite, isFavorite];
+}
