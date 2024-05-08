@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_movie/network/network_request.dart';
-import 'package:flutter_movie/page_bloc/page_bloc.dart';
-import 'package:flutter_movie/page_bloc/page_event.dart';
-import 'package:flutter_movie/page_bloc/page_state.dart';
-import 'package:flutter_movie/routes/generated_routes.dart';
-import 'package:flutter_movie/screen/home_page.dart';
+import 'package:flutter_movie_app/screen/home_page.dart';
+import 'package:flutter_movie_app/util/home_page.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_svg/svg.dart';
+
+import '../page_bloc/page_bloc.dart';
+import '../page_bloc/page_event.dart';
+import '../page_bloc/page_state.dart';
+import '../routes/generated_routes.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final widgetOptions = PageType.values.map((e) => PageHome(type: e)).toList();
-  final items = PageType.values
-      .map((e) => BottomNavigationBarItem(icon: Icon(e.icon), label: e.name))
+  final widgetOptions =
+      HomePage.values.map((e) => HomePageScreen(page: e)).toList();
+  final items = HomePage.values
+      .map((e) => BottomNavigationBarItem(
+          icon: Transform.scale(
+            scaleX: 0.9,
+            scaleY: 0.9,
+            child: SvgPicture.asset(e.icon),
+          ),
+          label: e.name,
+          activeIcon: Transform.scale(
+            scaleX: 1.2,
+            scaleY: 1.2,
+            child: SvgPicture.asset(e.icon),
+          )))
       .toList();
 
   @override
@@ -31,10 +45,10 @@ class HomeScreen extends StatelessWidget {
               bottomNavigationBar: BottomNavigationBar(
                 items: items,
                 currentIndex: state.tabIndex,
-                selectedItemColor: Colors.pinkAccent,
-                unselectedItemColor: Colors.grey,
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: Colors.black,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
                 elevation: 4.0,
                 onTap: (index) {
                   context.read<PageBloc>().add(TabChange(tabIndex: index));
@@ -51,7 +65,6 @@ class HomeScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.pushNamed(context, RouteGenerator.history);
                       }),
-
                   SpeedDialChild(
                       shape: const CircleBorder(),
                       child: const Icon(Icons.favorite),

@@ -1,7 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter_movie/model/movie.dart';
-import 'package:flutter_movie/model/movie_detail.dart';
-import 'package:flutter_movie/network/network_request.dart';
+part of 'o_movie_bloc.dart';
 
 enum MovieStateStatus {
   initial,
@@ -11,24 +8,26 @@ enum MovieStateStatus {
   failure,
 }
 
-class MovieState extends Equatable {
-  final PageType pageType;
+class OPhimMovieState extends Equatable {
   final String keyword;
+  final String pageType;
   final String category;
   final String country;
+  final Map<String, String> pageTypes;
   final Map<String, String> categories;
   final Map<String, String> countries;
   final MovieStateStatus status;
-  final List<PreviewMovie> items;
+  final List<OMovie> items;
   final int page;
   final bool isLastPage;
   final Exception? failure;
 
-  const MovieState(
+  const OPhimMovieState(
       {required this.pageType,
       this.keyword = "",
       required this.category,
       required this.country,
+      required this.pageTypes,
       required this.categories,
       required this.countries,
       this.status = MovieStateStatus.initial,
@@ -43,6 +42,7 @@ class MovieState extends Equatable {
         keyword,
         category,
         country,
+        pageTypes,
         categories,
         countries,
         status,
@@ -52,24 +52,25 @@ class MovieState extends Equatable {
         failure
       ];
 
-  MovieState copyWith(
-      {PageType? pageType,
-      String? keyword,
+  OPhimMovieState copyWith(
+      {String? keyword,
+      String? pageType,
       String? category,
       String? country,
+      Map<String, String>? pageTypes,
       Map<String, String>? categories,
       Map<String, String>? countries,
       MovieStateStatus? status,
-      List<PreviewMovie>? items,
+      List<OMovie>? items,
       int? page,
       bool? isLastPage,
-      MovieDetail? detail,
       Exception? failure}) {
-    return MovieState(
-        pageType: pageType ?? this.pageType,
+    return OPhimMovieState(
         keyword: keyword ?? this.keyword,
+        pageType: pageType ?? this.pageType,
         category: category ?? this.category,
         country: country ?? this.country,
+        pageTypes: pageTypes ?? this.pageTypes,
         categories: categories ?? this.categories,
         countries: countries ?? this.countries,
         status: status ?? this.status,

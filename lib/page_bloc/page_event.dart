@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 
-@immutable
+
+
 abstract class PageEvent {}
 
 class TabChange extends PageEvent {

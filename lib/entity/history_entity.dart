@@ -1,33 +1,28 @@
 import 'package:floor/floor.dart';
+import 'package:flutter_movie_app/entity/app_movie.dart';
+
 
 @entity
 class History {
   @primaryKey
   final String id;
-  final String name;
-  final String image;
+  final Movie movie;
   final int serverIndex;
   final int episodeIndex;
   final int position;
-  final int updateTime;
 
-  History(this.id, this.name, this.image, this.serverIndex, this.episodeIndex,
-      this.position, this.updateTime);
+  History(this.id, this.movie, this.serverIndex, this.episodeIndex, this.position);
 
   History copyWith({
-    String? name,
-    String? image,
     int? serverIndex,
     int? episodeIndex,
     int? position,
   }) {
     return History(
         id,
-        name ?? this.name,
-        image ?? this.image,
+        movie,
         serverIndex ?? this.serverIndex,
         episodeIndex ?? this.episodeIndex,
-        position ?? this.position,
-        DateTime.now().millisecondsSinceEpoch);
+        position ?? this.position);
   }
 }

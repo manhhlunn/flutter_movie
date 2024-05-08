@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_movie/detail_bloc/movie_detail_bloc.dart';
-import 'package:flutter_movie/page_bloc/page_bloc.dart';
-import 'package:flutter_movie/screen/detail.dart';
-import 'package:flutter_movie/screen/favorite.dart';
-import 'package:flutter_movie/screen/history.dart';
-import 'package:flutter_movie/screen/home.dart';
+import 'package:flutter_movie_app/entity/app_movie.dart';
+
+import '../screen/detail.dart';
+import '../screen/favorite.dart';
+import '../screen/history.dart';
+import '../screen/home.dart';
 
 class RouteGenerator {
-  final PageBloc pageBloc = PageBloc();
-  final MovieDetailBloc movieDetailBloc = MovieDetailBloc();
   static const String detail = '/detail';
   static const String history = '/history';
   static const String favorite = '/favorite';
@@ -21,7 +19,7 @@ class RouteGenerator {
 
       case detail:
         return MaterialPageRoute(
-            builder: (_) => DetailScreen(slug: args as String));
+            builder: (_) => DetailScreen(movie: args as Movie));
 
       case history:
         return MaterialPageRoute(builder: (_) => const HistoryScreen());

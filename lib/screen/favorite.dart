@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_movie/favorite_bloc/favorite_bloc.dart';
-import 'package:flutter_movie/widget/movie.dart';
+import 'package:flutter_movie_app/widget/movie.dart';
+
+import '../favorite_bloc/favorite_bloc.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -26,22 +27,25 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       child:
           BlocBuilder<FavoriteBloc, FavoriteState>(builder: (context, state) {
         return Scaffold(
-            body: makeBody(state, MediaQuery.of(context).viewPadding.top));
+            appBar: AppBar(
+              title: const Text('Favorite'),
+            ),
+            body: makeBody(state));
       }),
     );
   }
 
-  Widget makeBody(FavoriteState state, double top) {
+  Widget makeBody(FavoriteState state) {
     if (state.isLoading) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      return _contentListView(state, top);
+      return _contentListView(state);
     }
   }
 
-  Widget _contentListView(FavoriteState state, double top) {
+  Widget _contentListView(FavoriteState state) {
     return GridView.builder(
-        padding: EdgeInsets.only(left: 12, right: 12, top: top, bottom: 12),
+        padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
         itemCount: state.items.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
@@ -49,7 +53,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           childAspectRatio: 0.54,
         ),
         itemBuilder: (context, index) {
-          return FavoriteItem(
+          return MovieItem(
             movie: state.items[index],
           );
         });

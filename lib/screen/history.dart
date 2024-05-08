@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_movie/history_bloc/history_bloc.dart';
-import 'package:flutter_movie/widget/history.dart';
+
+import '../history_bloc/history_bloc.dart';
+import '../widget/history.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -25,22 +26,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
       create: (context) => _historyBloc,
       child: BlocBuilder<HistoryBloc, HistoryState>(builder: (context, state) {
         return Scaffold(
-            body: makeBody(state, MediaQuery.of(context).viewPadding.top));
+            appBar: AppBar(
+              title: const Text('History'),
+            ),
+            body: makeBody(state));
       }),
     );
   }
 
-  Widget makeBody(HistoryState state, double top) {
+  Widget makeBody(HistoryState state) {
     if (state.isLoading) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      return _contentListView(state, top);
+      return _contentListView(state);
     }
   }
 
-  Widget _contentListView(HistoryState state, double top) {
+  Widget _contentListView(HistoryState state) {
     return ListView.builder(
-        padding: EdgeInsets.only(left: 12, right: 12, top: top, bottom: 12),
+        padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
         itemCount: state.items.length,
         itemBuilder: (context, index) {
           return Container(

@@ -6,7 +6,7 @@ sealed class FavoriteEvent extends Equatable {
 
 class FavoriteChange extends FavoriteEvent {
 
-  final List<Favorite> items;
+  final List<Movie> items;
 
   const FavoriteChange({required this.items});
 

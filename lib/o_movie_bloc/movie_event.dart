@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+part of 'o_movie_bloc.dart';
 
 sealed class MovieEvent extends Equatable {
   const MovieEvent();
@@ -7,11 +7,7 @@ sealed class MovieEvent extends Equatable {
   List<Object> get props => [];
 }
 
-enum Filters {
-  keyword,
-  category,
-  country
-}
+enum Filters { keyword, pageType,category, country }
 
 class MovieFetchEvent extends MovieEvent {
   final int page;
@@ -31,7 +27,5 @@ class FilterEvent extends MovieEvent {
   @override
   List<Object> get props => [filter, value];
 }
-
-
 
 
